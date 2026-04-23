@@ -252,55 +252,6 @@ export default function PurchaseOrderEditor({ onBack, orderId = 'PO-000005' }: P
                     </div>
                   </div>
 
-                  {/* Multi-level Discounts Section */}
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                       <h4 className="text-[11px] font-black text-text-primary uppercase tracking-widest flex items-center gap-2">
-                         <TrendingUp size={14} className="text-brand" />
-                         Discounts
-                       </h4>
-                       <button 
-                         onClick={addDiscount}
-                         className="p-1 hover:bg-brand/10 text-brand rounded-full transition-all"
-                         title="Add discount level"
-                       >
-                         <Plus size={16} />
-                       </button>
-                    </div>
-                    
-                    <div className="space-y-2 max-h-[200px] overflow-y-auto pr-1">
-                      {discounts.map((discount) => (
-                        <div key={discount.id} className="flex items-center gap-2 group bg-slate-50 p-2 rounded-lg border border-border/50 hover:border-brand/30 transition-all">
-                          <input 
-                            type="text" 
-                            value={discount.name} 
-                            onChange={(e) => updateDiscount(discount.id, 'name', e.target.value)}
-                            className="flex-1 bg-transparent border-none p-0 text-[11px] font-bold text-text-primary focus:ring-0"
-                            placeholder="Discount label"
-                          />
-                          <div className="flex items-center gap-1">
-                            <input 
-                              type="number" 
-                              value={discount.value} 
-                              onChange={(e) => updateDiscount(discount.id, 'value', parseFloat(e.target.value) || 0)}
-                              className="w-12 bg-white border border-border rounded px-1 py-0.5 text-right text-[11px] font-black text-brand focus:ring-1 focus:ring-brand"
-                            />
-                            <span className="text-[11px] font-black text-slate-400">%</span>
-                          </div>
-                          <button 
-                            onClick={() => removeDiscount(discount.id)}
-                            className="p-1 opacity-0 group-hover:opacity-100 text-red-400 hover:text-red-500 transition-all"
-                          >
-                            <X size={12} />
-                          </button>
-                        </div>
-                      ))}
-                      {discounts.length === 0 && (
-                        <p className="text-[10px] text-text-secondary italic text-center py-2">No discounts applied</p>
-                      )}
-                    </div>
-                  </div>
-
                   <div className="space-y-4 pt-4 border-t border-border">
                     <div className="flex justify-between items-start">
                       <span className="text-xs font-black text-text-secondary uppercase">Vendor</span>
@@ -317,17 +268,54 @@ export default function PurchaseOrderEditor({ onBack, orderId = 'PO-000005' }: P
                 </div>
 
                 <div className="bg-slate-50 p-6 border-t border-border space-y-4">
-                  <div className="flex justify-between text-sm">
+                  <div className="flex justify-between items-center text-sm">
                     <span className="font-medium text-text-secondary">Subtotal</span>
-                    <span className="font-bold text-text-primary">${subtotal.toFixed(2)}</span>
+                    <div className="flex items-center gap-3">
+                      <span className="font-bold text-text-primary">${subtotal.toFixed(2)}</span>
+                      <button 
+                        onClick={addDiscount}
+                        className="p-1.5 bg-white border border-border hover:bg-brand/5 hover:text-brand hover:border-brand/30 rounded-lg text-slate-400 transition-all shadow-sm"
+                        title="Add discount"
+                      >
+                        <Plus size={14} />
+                      </button>
+                    </div>
                   </div>
                   
-                  {discounts.map(d => (
-                    <div key={d.id} className="flex justify-between text-sm">
-                      <span className="font-medium text-red-500 uppercase tracking-tighter text-[11px]">{d.name} ({d.value}%)</span>
-                      <span className="font-bold text-red-500">-${((subtotal * d.value) / 100).toFixed(2)}</span>
-                    </div>
-                  ))}
+                  <div className="space-y-2">
+                    {discounts.map(d => (
+                      <div key={d.id} className="flex justify-between items-center group bg-white/40 p-2 rounded-lg border border-border/50 hover:border-brand/30 transition-all">
+                        <div className="flex items-center gap-2 flex-1">
+                          <button 
+                            onClick={() => removeDiscount(d.id)}
+                            className="p-1 text-red-400 hover:text-red-600 hover:bg-red-50 rounded transition-all opacity-0 group-hover:opacity-100"
+                          >
+                            <X size={10} />
+                          </button>
+                          <input 
+                            type="text" 
+                            value={d.name} 
+                            onChange={(e) => updateDiscount(d.id, 'name', e.target.value)}
+                            className="bg-transparent border-none p-0 text-[11px] font-bold text-red-500 uppercase tracking-tighter w-full focus:ring-0"
+                          />
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <div className="flex items-center gap-1">
+                            <input 
+                              type="number" 
+                              value={d.value} 
+                              onChange={(e) => updateDiscount(d.id, 'value', parseFloat(e.target.value) || 0)}
+                              className="w-10 bg-white border border-border/50 rounded px-1 py-0.5 text-right text-[11px] font-black text-red-500 focus:ring-1 focus:ring-brand shadow-sm"
+                            />
+                            <span className="text-[10px] font-black text-slate-300">%</span>
+                          </div>
+                          <span className="font-bold text-red-500 text-sm min-w-[60px] text-right">
+                            -${((subtotal * d.value) / 100).toFixed(2)}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
 
                   <div className="pt-3 border-t border-border flex justify-between items-baseline">
                     <span className="text-sm font-black text-text-primary uppercase tracking-wider">Total</span>
